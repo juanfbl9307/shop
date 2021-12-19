@@ -1,7 +1,21 @@
-import { Body, Controller, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ShopService } from './shop.service';
-import { UserEntity, UserTransfer } from './interface/user.entity';
-import {Order, Purchase} from './interface/order.entity';
+import { User, UserEntity, UserTransfer } from './interface/user.entity';
+import { Order, Purchase } from './interface/order.entity';
+import { CreateUserDto } from './dto/create_user.dto';
+import { OrderProductBuyDto } from './dto/order_product_buy.dto';
+import { AddFundsDto } from './dto/user_add_funds.dtos';
+import { TransferCashDto } from './dto/user_transfer.dto';
+import { CreateProductDto } from './dto/create_product.dto';
+import { CreateOrderDto } from './dto/create_order.dto';
+import { Product } from './interface/product.entity';
 
 @Controller('store')
 export class ShopController {
@@ -17,8 +31,13 @@ export class ShopController {
     return this.shopService.createOrder({ ...params });
   }
 
+  @Post('product')
+  createProduct(@Body() params: CreateProductDto): Promise<Product> {
+    return this.shopService.createProduct({ ...params });
+  }
+
   @Patch('buy')
-  buyOrder(@Query() params: BuyOderDto): Promise<Purchase> {
+  buyOrder(@Query() params: OrderProductBuyDto): Promise<User> {
     return this.shopService.buyOrder(params);
   }
 

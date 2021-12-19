@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ShopRepository } from './shop.repository';
-import {Order, Purchase} from "./interface/order.entity";
-import {User, UserEntity, UserTransfer} from "./interface/user.entity";
-
+import { Order, Purchase } from './interface/order.entity';
+import { User, UserTransfer } from './interface/user.entity';
+import { Product } from './interface/product.entity';
 
 @Injectable()
 export class ShopService {
@@ -11,35 +11,71 @@ export class ShopService {
     return this.shopRepository.create(params);
   }
 
-  async createOrder(params): Promise<Order> {
-    const articlesNames = params.map((product) => product.name);
-    const amount = params.reduce((total, price) => {
-      return total + price;
-    }, 0);
-    const order = { articles: articlesNames, amount: amount };
-    return this.shopRepository.createOder(order);
+  async createProduct(product): Promise<Product> {
+    return await this.shopRepository.createProduct(product);
   }
 
-  async buyOrder(params): Promise<Purchase> {
-    const amount = this.shopRepository.getOrder(params.order);
-    const userBalance = this.shopRepository.getBalance(params.username);
-    if (amount > userBalance)
+  async createOrder(params): Promise<any> {
+    const order = await this.shopRepository.createOder(params.userId);
+    const productsId = params.productsIds;
+    let products = await this.shopRepository.getProducts(productsId);
+    const orderAmount = products.reduce((acc, current) => {
+      return current.price + acc;
+    }, 0);
+    const orderParams = [];
+    products.forEach((product) => {
+      orderParams.push({
+        order_id: order.id,
+        product_id: product.id,
+        product_price: product.price,
+      });
+    });
+    await this.shopRepository.placeOrders(orderParams);
+
+    return {
+      OrderCreater: {
+        userId: params.userId,
+        products: products,
+        totalPrice: orderAmount,
+      },
+    };
+  }
+
+  async buyOrder(params): Promise<User> {
+    console.log(params);
+    const amount = await this.shopRepository.totalOderPrice(params.orderId);
+    const userBalance = await this.shopRepository.userBalance(params.userId);
+    if (amount._sum.product_price > userBalance.balance)
       throw new BadRequestException('Insufficient Founds');
-    return this.shopRepository.substract(amount);
+    return this.shopRepository.substract(
+      params.userId,
+      amount._sum.product_price,
+    );
   }
 
   async addFunds(params): Promise<User> {
-    return this.shopRepository.addFunds(params);
+    return this.shopRepository.addFunds(params.userId, params.cash);
   }
 
-  async transferCash(params): Promise<UserTransfer> {
-    const userBalance = this.shopRepository.getBalance(params.username);
-    const receptor = { username: params.receptor, cash: params.cash };
-    const sender = { username: params.username, cash: params.cash };
-    if (params.cash > userBalance)
+  async transferCash(params): Promise<any> {
+    const userBalance = await this.shopRepository.userBalance(
+      params.senderUserId,
+    );
+    if (params.cash > userBalance.balance)
       throw new BadRequestException('Insufficient Founds');
-    const transfer = this.shopRepository.addFunds(receptor);
-    await this.shopRepository.substract(sender);
-    return transfer;
+    const receptor = await this.shopRepository.addFunds(
+      params.receptorUserId,
+      params.cash,
+    );
+    const sender = await this.shopRepository.substract(
+      params.senderUserId,
+      params.cash,
+    );
+
+    const response = {
+      Sender: sender,
+      Receptor: receptor,
+    };
+    return response;
   }
 }
