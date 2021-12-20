@@ -10,7 +10,7 @@ import {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
 } from 'aws-lambda';
-import { Logger } from '@nestjs/common';
+import { ValidationPipe } from '@nestjs/common';
 import awsLambdaFastifyDefault from 'aws-lambda-fastify';
 const awsLambdaFastify: typeof awsLambdaFastifyDefault = require('aws-lambda-fastify');
 
@@ -28,7 +28,8 @@ async function bootstrapServer(): Promise<NestApp> {
     ShopModule,
     new FastifyAdapter(instance),
   );
-  app.setGlobalPrefix(process.env.API_PREFIX);
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  app.setGlobalPrefix('muncher');
   await app.init();
   return { app, instance };
 }

@@ -1,7 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ShopRepository } from './shop.repository';
-import { Order, Purchase } from './interface/order.entity';
-import { User, UserEntity, UserTransfer } from './interface/user.entity';
+import { User, UserEntity } from './interface/user.entity';
 import { Product } from './interface/product.entity';
 
 @Injectable()
@@ -18,7 +17,7 @@ export class ShopService {
   async createOrder(params): Promise<any> {
     const order = await this.shopRepository.createOder(params.userId);
     const productsId = params.productsId;
-    let products = await this.shopRepository.getProducts(productsId);
+    const products = await this.shopRepository.getProducts(productsId);
     const orderAmount = products.reduce((acc, current) => {
       return current.price + acc;
     }, 0);
@@ -46,7 +45,7 @@ export class ShopService {
     const userBalance = await this.shopRepository.userBalance(params.userId);
     if (amount._sum.product_price > userBalance.balance)
       throw new BadRequestException('Insufficient Founds');
-    return this.shopRepository.substract(
+    return this.shopRepository.subtract(
       params.userId,
       amount._sum.product_price,
     );
@@ -66,7 +65,7 @@ export class ShopService {
       params.receptorUserId,
       params.cash,
     );
-    const sender = await this.shopRepository.substract(
+    const sender = await this.shopRepository.subtract(
       params.senderUserId,
       params.cash,
     );
@@ -76,5 +75,9 @@ export class ShopService {
       Receptor: receptor,
     };
     return response;
+  }
+
+  async ordersList(userId) {
+    return this.shopRepository.ordersList(userId);
   }
 }

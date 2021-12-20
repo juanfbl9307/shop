@@ -1,6 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { async } from 'rxjs';
 import { ShopRepository } from '../shop.repository';
 import { ShopService } from '../shop.service';
 
@@ -143,7 +142,7 @@ describe('ShopController', () => {
         .spyOn(shopRepository, 'totalOrderPrice')
         .mockResolvedValue(orderPrice);
       jest.spyOn(shopRepository, 'userBalance').mockResolvedValue(userBalance);
-      jest.spyOn(shopRepository, 'substract').mockResolvedValue(user);
+      jest.spyOn(shopRepository, 'subtract').mockResolvedValue(user);
       await shopService.buyOrder(params);
     });
     it('Should get the amount of the order by id', async () => {
@@ -161,13 +160,13 @@ describe('ShopController', () => {
       );
     });
     it('Should return the user after substract the amount from the balance', async () => {
-      expect(shopRepository.substract).toBeCalled();
-      expect(shopRepository.substract).toBeCalledWith(
+      expect(shopRepository.subtract).toBeCalled();
+      expect(shopRepository.subtract).toBeCalledWith(
         params.userId,
         orderPrice._sum.product_price,
       );
       expect(
-        await shopRepository.substract(
+        await shopRepository.subtract(
           params.userId,
           orderPrice._sum.product_price,
         ),
@@ -206,7 +205,7 @@ describe('ShopController', () => {
     beforeEach(async () => {
       jest.spyOn(shopRepository, 'userBalance').mockResolvedValue(userBalance);
       jest.spyOn(shopRepository, 'addFunds').mockResolvedValue(receptor);
-      jest.spyOn(shopRepository, 'substract').mockResolvedValue(sender);
+      jest.spyOn(shopRepository, 'subtract').mockResolvedValue(sender);
 
       await shopService.transferCash(params);
     });
@@ -234,13 +233,13 @@ describe('ShopController', () => {
       expect(
         await shopRepository.addFunds(params.receptorUserId, params.cash),
       ).toEqual(receptor);
-      expect(shopRepository.substract).toBeCalled();
-      expect(shopRepository.substract).toBeCalledWith(
+      expect(shopRepository.subtract).toBeCalled();
+      expect(shopRepository.subtract).toBeCalledWith(
         params.senderUserId,
         params.cash,
       );
       expect(
-        await shopRepository.substract(params.senderUserId, params.cash),
+        await shopRepository.subtract(params.senderUserId, params.cash),
       ).toEqual(sender);
     });
     it('Should call the shopRepository and update the balance of the sender and the receptor', async () => {

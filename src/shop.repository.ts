@@ -1,5 +1,5 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { User, UserEntity } from './interface/user.entity';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { UserEntity } from './interface/user.entity';
 import { PrismaService } from './prisma.service';
 
 @Injectable()
@@ -74,7 +74,7 @@ export class ShopRepository {
     });
   }
 
-  async substract(userId, orderPrice) {
+  async subtract(userId, orderPrice) {
     return await this.prismaService.user.update({
       data: { balance: { decrement: orderPrice } },
       where: { id: userId },
@@ -85,6 +85,13 @@ export class ShopRepository {
     return await this.prismaService.user.update({
       data: { balance: { increment: cash } },
       where: { id: userId },
+    });
+  }
+
+  async ordersList(userId) {
+    return await this.prismaService.order.findMany({
+      where: { user_id: userId },
+      include: { orders: { include: { order: true } } },
     });
   }
 }

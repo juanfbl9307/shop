@@ -1,7 +1,7 @@
 import { Body, Controller, Patch, Post, Query, Get } from '@nestjs/common';
 import { ShopService } from './shop.service';
 import { User, UserEntity, UserTransfer } from './interface/user.entity';
-import { Order, Purchase } from './interface/order.entity';
+import { Order } from './interface/order.entity';
 import { CreateUserDto } from './dto/create_user.dto';
 import { OrderProductBuyDto } from './dto/order_product_buy.dto';
 import { AddFundsDto } from './dto/user_add_funds.dtos';
@@ -34,9 +34,9 @@ export class ShopController {
     return this.shopService.buyOrder(params);
   }
 
-  @Get('hi')
-  hi(@Query() params: OrderProductBuyDto): any {
-    return 'hi';
+  @Get('orders')
+  ordersList(@Query() userId: number): Promise<any> {
+    return this.shopService.ordersList({ userId: userId });
   }
 
   @Patch('addfunds')
