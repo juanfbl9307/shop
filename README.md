@@ -1,16 +1,4 @@
 
-Steps to run:
-
-
-
-//docker run --rm --name some-postgres -d -p 5432:5432 postgres
-//npm install
-//npx prisma db seed --preview-feature
-//npx prisma migrate dev --name init
-//npm build
-//serverless offline
-
-
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
 </p>
