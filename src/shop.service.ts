@@ -76,8 +76,4 @@ export class ShopService {
     };
     return response;
   }
-
-  async ordersList(userId) {
-    return this.shopRepository.ordersList(userId);
-  }
 }

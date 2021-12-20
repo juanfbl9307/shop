@@ -87,11 +87,4 @@ export class ShopRepository {
       where: { id: userId },
     });
   }
-
-  async ordersList(userId) {
-    return await this.prismaService.order.findMany({
-      where: { user_id: userId },
-      include: { orders: { include: { order: true } } },
-    });
-  }
 }

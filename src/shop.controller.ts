@@ -34,11 +34,6 @@ export class ShopController {
     return this.shopService.buyOrder(params);
   }
 
-  @Get('orders')
-  ordersList(@Query() userId: number): Promise<any> {
-    return this.shopService.ordersList({ userId: userId });
-  }
-
   @Patch('addfunds')
   addFunds(@Query() params: AddFundsDto): Promise<UserEntity> {
     return this.shopService.addFunds(params);

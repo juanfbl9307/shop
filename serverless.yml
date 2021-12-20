@@ -27,7 +27,7 @@ package:
 
 functions:
   main:
-    handler: dist/lambda-entry-point.handler
+    handler: dist/src/lambda-entry-point.handler
     events:
       - http:
           method: any

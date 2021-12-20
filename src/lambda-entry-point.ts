@@ -29,7 +29,6 @@ async function bootstrapServer(): Promise<NestApp> {
     new FastifyAdapter(instance),
   );
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  app.setGlobalPrefix('muncher');
   await app.init();
   return { app, instance };
 }
