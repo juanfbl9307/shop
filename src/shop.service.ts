@@ -43,7 +43,6 @@ export class ShopService {
 
   async buyOrder(params): Promise<User> {
     const amount = await this.shopRepository.totalOrderPrice(params.orderId);
-    console.log(amount);
     const userBalance = await this.shopRepository.userBalance(params.userId);
     if (amount._sum.product_price > userBalance.balance)
       throw new BadRequestException('Insufficient Founds');

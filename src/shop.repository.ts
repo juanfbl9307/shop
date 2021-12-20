@@ -51,9 +51,16 @@ export class ShopRepository {
   }
 
   async createProduct(product) {
-    return await this.prismaService.product.create({
-      data: { name: product.name, price: product.price },
-    });
+    try {
+      return await this.prismaService.product.create({
+        data: { name: product.name, price: product.price },
+      });
+    } catch (e) {
+      if (e.code == 'P2002') {
+        throw new BadRequestException('Username already exist');
+      }
+      throw e;
+    }
   }
 
   async totalOrderPrice(orderId) {

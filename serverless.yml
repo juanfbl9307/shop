@@ -9,9 +9,7 @@ custom:
     - staging
 
 plugins:
-  - serverless-plugin-optimize
   - serverless-offline
-  - serverless-plugin-warmup
 
 provider:
   name: aws

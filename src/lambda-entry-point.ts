@@ -27,7 +27,6 @@ async function bootstrapServer(): Promise<NestApp> {
   const app = await NestFactory.create<NestFastifyApplication>(
     ShopModule,
     new FastifyAdapter(instance),
-    { logger: !process.env.AWS_EXECUTION_ENV ? new Logger() : console },
   );
   app.setGlobalPrefix(process.env.API_PREFIX);
   await app.init();
