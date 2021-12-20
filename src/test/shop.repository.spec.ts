@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ShopRepository } from '../src/shop.repository';
+import { ShopRepository } from '../shop.repository';
 
-describe('Src', () => {
+describe('ShopRepository', () => {
   let provider: ShopRepository;
 
   beforeEach(async () => {

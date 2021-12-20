@@ -1,22 +1,30 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { User } from './interface/user.entity';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import { User, UserEntity } from './interface/user.entity';
 import { PrismaService } from './prisma.service';
 
 @Injectable()
 export class ShopRepository {
   constructor(private readonly prismaService: PrismaService) {}
-  async create(params): Promise<User> {
+  async create(params): Promise<UserEntity> {
     const user = {
       username: params.username,
       email: params.email,
       balance: params.balance,
     };
-    const create = await this.prismaService.user.create({ data: user });
-    return {
-      username: create.username,
-      email: create.email,
-      balance: create.balance,
-    };
+    try {
+      const create = await this.prismaService.user.create({ data: user });
+      return {
+        id: create.id,
+        username: create.username,
+        email: create.email,
+        balance: create.balance,
+      };
+    } catch (e) {
+      if (e.code == 'P2002') {
+        throw new BadRequestException('Username already exist');
+      }
+      throw e;
+    }
   }
 
   async userBalance(userId) {
@@ -48,7 +56,7 @@ export class ShopRepository {
     });
   }
 
-  async totalOderPrice(orderId) {
+  async totalOrderPrice(orderId) {
     return await this.prismaService.orderPlaced.aggregate({
       where: {
         order_id: orderId,

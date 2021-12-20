@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  ParseIntPipe,
-  Patch,
-  Post,
-  Query,
-} from '@nestjs/common';
+import { Body, Controller, Patch, Post, Query, Get } from '@nestjs/common';
 import { ShopService } from './shop.service';
 import { User, UserEntity, UserTransfer } from './interface/user.entity';
 import { Order, Purchase } from './interface/order.entity';
@@ -39,6 +32,11 @@ export class ShopController {
   @Patch('buy')
   buyOrder(@Query() params: OrderProductBuyDto): Promise<User> {
     return this.shopService.buyOrder(params);
+  }
+
+  @Get('hi')
+  hi(@Query() params: OrderProductBuyDto): any {
+    return 'hi';
   }
 
   @Patch('addfunds')

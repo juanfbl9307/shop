@@ -1,13 +1,13 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ShopRepository } from './shop.repository';
 import { Order, Purchase } from './interface/order.entity';
-import { User, UserTransfer } from './interface/user.entity';
+import { User, UserEntity, UserTransfer } from './interface/user.entity';
 import { Product } from './interface/product.entity';
 
 @Injectable()
 export class ShopService {
   constructor(private readonly shopRepository: ShopRepository) {}
-  create(params): Promise<User> {
+  create(params): Promise<UserEntity> {
     return this.shopRepository.create(params);
   }
 
@@ -17,7 +17,7 @@ export class ShopService {
 
   async createOrder(params): Promise<any> {
     const order = await this.shopRepository.createOder(params.userId);
-    const productsId = params.productsIds;
+    const productsId = params.productsId;
     let products = await this.shopRepository.getProducts(productsId);
     const orderAmount = products.reduce((acc, current) => {
       return current.price + acc;
@@ -33,7 +33,7 @@ export class ShopService {
     await this.shopRepository.placeOrders(orderParams);
 
     return {
-      OrderCreater: {
+      OrderCreated: {
         userId: params.userId,
         products: products,
         totalPrice: orderAmount,
@@ -42,8 +42,8 @@ export class ShopService {
   }
 
   async buyOrder(params): Promise<User> {
-    console.log(params);
-    const amount = await this.shopRepository.totalOderPrice(params.orderId);
+    const amount = await this.shopRepository.totalOrderPrice(params.orderId);
+    console.log(amount);
     const userBalance = await this.shopRepository.userBalance(params.userId);
     if (amount._sum.product_price > userBalance.balance)
       throw new BadRequestException('Insufficient Founds');
