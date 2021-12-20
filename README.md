@@ -47,27 +47,28 @@ Steps to run:
 
 ## Installation
 
-$ docker run --rm --name some-postgres -d -p 5432:5432 postgres
+```bash
 $ npm install
-$ npx prisma db seed --preview-feature
-$ npx prisma migrate dev --name init
-$ npm build
+```
 
 ## Running the app
 
-
-$ serverless offline
-
+```bash
+# development
+$ npm run start
+# watch mode
+$ npm run start:dev
+# production mode
+$ npm run start:prod
+```
 
 ## Test
 
 ```bash
 # unit tests
 $ npm run test
-
 # e2e tests
 $ npm run test:e2e
-
 # test coverage
 $ npm run test:cov
 ```
